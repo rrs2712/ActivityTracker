@@ -1,9 +1,16 @@
 package com.g54mdp.cw2.activitytracker;
 
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
 import android.location.Location;
 import android.location.LocationListener;
 import android.os.Bundle;
 import android.util.Log;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 /**
  * Created by rrs27 on 2016-12-18.
@@ -12,13 +19,15 @@ import android.util.Log;
 public class LocationListenerImpl implements LocationListener {
 
     private final String CLA;
+    private Context context;
     Location previousLocation;
 
     /**
      * Non parameter Class Constructor
      */
-    public LocationListenerImpl() {
+    public LocationListenerImpl(Context context) {
         CLA = "RRS LocationListener";
+        this.context = context;
     }
 
 
@@ -36,18 +45,71 @@ public class LocationListenerImpl implements LocationListener {
         String msg = "";
 
         if (previousLocation!=null){
-            msg = "Pre Loc" + "\tLAT: " + previousLocation.getLatitude() + "\tLON: " + previousLocation.getLongitude();
-            Log.d(CLA, msg);
-
-            msg = "New Loc" + "\tLAT: " + location.getLatitude() + "\tLON: " + location.getLongitude();
-            Log.d(CLA, msg);
-
-            float dist = previousLocation.distanceTo(location);
-            msg = "Distance between locations: " + dist + " meters.";
-            Log.d(CLA, msg);
+//            msg = "Pre Loc" + "\tLAT: " + previousLocation.getLatitude() + "\tLON: " + previousLocation.getLongitude();
+//            Log.d(CLA, msg);
+//
+//            msg = "New Loc" + "\tLAT: " + location.getLatitude() + "\tLON: " + location.getLongitude();
+//            Log.d(CLA, msg);
+//
+//            float dist = previousLocation.distanceTo(location);
+//            msg = "Distance between locations: " + dist + " meters.";
+//            Log.d(CLA, msg);
         }
 
+        saveRecord(location.getLatitude(),location.getLongitude(),location.getAltitude());
+        msg = "New record added";
+        Log.d(CLA,msg);
+
         previousLocation = location;
+    }
+
+    private void saveRecord(double lat, double lon, double alt){
+        DateFormat df = new SimpleDateFormat(DBHelper.DB_DATE_FORMAT);
+        Calendar rightNow = Calendar.getInstance();
+        String timeStamp = df.format(rightNow.getTime());
+
+        ContentValues cv = new ContentValues();
+        cv.put(ProviderContract.DATE_TIME_ST,timeStamp);
+        cv.put(ProviderContract.LOCATION_LAT,lat);
+        cv.put(ProviderContract.LOCATION_LON,lon);
+        cv.put(ProviderContract.LOCATION_ALT,alt);
+
+        context.getContentResolver().insert(ProviderContract.LOCATION_URI,cv);
+    }
+
+    private String getInfo() {
+        String[] projection = new String[]{
+                ProviderContract._ID,
+                ProviderContract.DATE_TIME_ST,
+                ProviderContract.LOCATION_LAT,
+                ProviderContract.LOCATION_LON,
+                ProviderContract.LOCATION_ALT
+        };
+
+        String selection = "3";
+
+        Cursor cursor = context.getContentResolver().query(
+                ProviderContract.LOCATION_URI,
+                projection,
+                selection,null,null);
+
+        Log.d(CLA,cursor.toString() );
+
+        String toLog = "";
+
+        if(cursor.moveToFirst())
+        {
+            do
+            {
+                toLog += cursor.getString(0); toLog += " | ";
+                toLog += cursor.getString(1); toLog += " | ";
+                toLog += cursor.getString(2); toLog += " | ";
+                toLog += cursor.getString(3); toLog += " | ";
+                toLog += cursor.getString(4); toLog += " | ";
+            }
+            while(cursor.moveToNext());
+        }
+        return toLog;
     }
 
 

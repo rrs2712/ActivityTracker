@@ -21,6 +21,13 @@
 
         <service
             android:name=".LocationService"/>
+
+        <provider
+            android:authorities="com.g54mdp.cw2.activitytracker.ConProvider"
+            android:multiprocess="true"
+            android:exported="true"
+            android:name="com.g54mdp.cw2.activitytracker.ConProvider">
+        </provider>
     </application>
 
 </manifest>

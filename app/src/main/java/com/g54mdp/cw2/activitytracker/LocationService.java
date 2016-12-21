@@ -111,7 +111,7 @@ public class LocationService extends Service {
         Log.d(CLA,"startLocationManager");
 
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        locationListener = new LocationListenerImpl();
+        locationListener = new LocationListenerImpl(this);
 
         if (ActivityCompat.checkSelfPermission(
                 this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&

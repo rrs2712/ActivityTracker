@@ -54,9 +54,63 @@ public class MainActivity extends AppCompatActivity {
     public void onBtnStart(View view){
         Log.d(CLA, "onBtnStart");
 
-//        startAndBindLocationService();
-        Toast.makeText(this,"Now this button does nothing",Toast.LENGTH_SHORT).show();
+//        saveRecord(0.1,0.2,0.3);
+//        String toLog = getInfo();
+
+        String toLog = "Does nothing so far";
+        Toast.makeText(this,toLog,Toast.LENGTH_SHORT).show();
     }
+
+//    private void saveRecord(double lat, double lon, double alt){
+//        DateFormat df = new SimpleDateFormat(DBHelper.DB_DATE_FORMAT);
+//        Calendar rightNow = Calendar.getInstance();
+//        String timeStamp = df.format(rightNow.getTime());
+//
+//        ContentValues cv = new ContentValues();
+//        cv.put(ProviderContract.DATE_TIME_ST,timeStamp);
+//        cv.put(ProviderContract.LOCATION_LAT,lat);
+//        cv.put(ProviderContract.LOCATION_LON,lon);
+//        cv.put(ProviderContract.LOCATION_ALT,alt);
+//
+//        getContentResolver().insert(ProviderContract.LOCATION_URI,cv);
+//    }
+
+
+//    private String getInfo() {
+//        String[] projection = new String[]{
+//                ProviderContract._ID,
+//                ProviderContract.DATE_TIME_ST,
+//                ProviderContract.LOCATION_LAT,
+//                ProviderContract.LOCATION_LON,
+//                ProviderContract.LOCATION_ALT
+//        };
+//
+//        String selection = "3";
+//
+//        Cursor cursor = getContentResolver().query(
+//                ProviderContract.LOCATION_URI,
+//                projection,
+//                selection,null,null);
+//
+//        Log.d(CLA,cursor.toString() );
+//
+//        String toLog = "";
+//
+//        if(cursor.moveToFirst())
+//        {
+//            do
+//            {
+//                toLog += cursor.getString(0); toLog += " | ";
+//                toLog += cursor.getString(1); toLog += " | ";
+//                toLog += cursor.getString(2); toLog += " | ";
+//                toLog += cursor.getString(3); toLog += " | ";
+//                toLog += cursor.getString(4); toLog += " | ";
+//                Log.d(CLA,toLog);
+//            }
+//            while(cursor.moveToNext());
+//        }
+//        return toLog;
+//    }
 
     public void onBtnStop(View view){
         Log.d(CLA, "onBtnStop");
