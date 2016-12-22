@@ -10,12 +10,19 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
 import android.os.Binder;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 public class LocationService extends Service {
+
+    public static final String
+        AUTO_CREATE_NOTIFICATION = "create",
+        SHARED_PREF = "com.g54mdp.cw2.activitytracker",
+        SP_AUTO_CREATE = "ux_create_not";
+
     private final String
         CLA = "RRS LocationService",
         MSG = "Tracking in background",
@@ -57,6 +64,14 @@ public class LocationService extends Service {
         Log.d(CLA, "onStartCommand");
 
         startLocationManager();
+
+        Bundle bundle = intent.getExtras();
+//        boolean createNot = bundle.getBoolean(AUTO_CREATE_NOTIFICATION);
+//        if (createNot){
+        if (bundle.getBoolean(AUTO_CREATE_NOTIFICATION)){
+            createNotification();
+            Log.d(CLA,"Notification auto created");
+        }
 
         return Service.START_STICKY;
     }

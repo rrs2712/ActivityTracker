@@ -4,13 +4,16 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
+import android.widget.CheckBox;
+
+import static com.g54mdp.cw2.activitytracker.LocationService.SHARED_PREF;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -33,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
 
         startAndBindLocationService();
+//        manageGUI();
     }
 
     @Override
@@ -51,15 +55,15 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void onBtnStart(View view){
-        Log.d(CLA, "onBtnStart");
-
-//        saveRecord(0.1,0.2,0.3);
-//        String toLog = getInfo();
-
-        String toLog = "Does nothing so far";
-        Toast.makeText(this,toLog,Toast.LENGTH_SHORT).show();
-    }
+//    public void onBtnStart(View view){
+//        Log.d(CLA, "onBtnStart");
+//
+////        saveRecord(0.1,0.2,0.3);
+////        String toLog = getInfo();
+//
+//        String toLog = "Does nothing so far";
+//        Toast.makeText(this,toLog,Toast.LENGTH_SHORT).show();
+//    }
 
 //    private void saveRecord(double lat, double lon, double alt){
 //        DateFormat df = new SimpleDateFormat(DBHelper.DB_DATE_FORMAT);
@@ -112,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
 //        return toLog;
 //    }
 
-    public void onBtnStop(View view){
+    public void onBtnAction(View view){
         Log.d(CLA, "onBtnStop");
 
         if(keepServiceRunning){
@@ -125,17 +129,24 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void manageGUI(){
-        Button btn = (Button) findViewById(R.id.btn_stop);
+        Button btn = (Button) findViewById(R.id.btn_action);
 
         if(keepServiceRunning){
             btn.setText("Stop service");
         }else{
             btn.setText("Start service");
         }
+
+        setSettings();
     }
 
     private void startAndBindLocationService() {
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(LocationService.AUTO_CREATE_NOTIFICATION,false);
+
         Intent serviceIntent = new Intent(MainActivity.this,LocationService.class);
+        serviceIntent.putExtras(bundle);
+
         this.startService(serviceIntent);
         bindLocationService(serviceIntent);
         keepServiceRunning = true;
@@ -172,5 +183,35 @@ public class MainActivity extends AppCompatActivity {
             Log.d(CLA,"onServiceDisconnected");
         }
     };
+
+    private void saveSettings(){
+        Log.d(CLA,"saveSettings");
+
+        CheckBox ch = (CheckBox) findViewById(R.id.chbox_boot);
+        boolean autoCreate = ch.isChecked();
+
+        SharedPreferences settings = getSharedPreferences(LocationService.SHARED_PREF, 0);
+        SharedPreferences.Editor editor = settings.edit();
+
+        editor.putBoolean(LocationService.SP_AUTO_CREATE,autoCreate);
+
+        editor.commit();
+    }
+
+    private void setSettings(){
+        Log.d(CLA,"setSettings");
+
+        SharedPreferences settings = getSharedPreferences(LocationService.SHARED_PREF, 0);
+        boolean createNot = settings.getBoolean(LocationService.SP_AUTO_CREATE,false);
+
+        CheckBox ch = (CheckBox) findViewById(R.id.chbox_boot);
+        ch.setChecked(createNot);
+    }
+
+    public void onCheckBox(View v){
+        Log.d(CLA,"onCheckBox");
+
+        saveSettings();
+    }
 
 }

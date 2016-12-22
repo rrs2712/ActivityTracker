@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
@@ -8,6 +8,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:orientation="vertical"
     tools:context="com.g54mdp.cw2.activitytracker.MainActivity">
 
     <LinearLayout
@@ -15,24 +16,23 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true">
+        android:layout_centerHorizontal="true"
+        android:paddingBottom="16dp">
 
         <Button
-            android:text="Start"
+            android:text="Action Button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/btn_start"
-            android:onClick="onBtnStart"
-            android:layout_weight="1" />
-
-        <Button
-            android:text="Stop"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/btn_stop"
-            android:onClick="onBtnStop"
-            android:layout_weight="1" />
+            android:id="@+id/btn_action"
+            android:onClick="onBtnAction" />
 
     </LinearLayout>
 
-</RelativeLayout>
+    <CheckBox
+        android:text="Auto track when phone boots"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/chbox_boot"
+        android:onClick="onCheckBox"/>
+
+</LinearLayout>

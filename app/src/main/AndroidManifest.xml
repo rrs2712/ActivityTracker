@@ -4,6 +4,7 @@
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
         android:allowBackup="true"
@@ -19,15 +20,20 @@
             </intent-filter>
         </activity>
 
-        <service
-            android:name=".LocationService"/>
+        <service android:name=".LocationService" />
 
         <provider
+            android:name=".ConProvider"
             android:authorities="com.g54mdp.cw2.activitytracker.ConProvider"
-            android:multiprocess="true"
             android:exported="true"
-            android:name="com.g54mdp.cw2.activitytracker.ConProvider">
-        </provider>
+            android:multiprocess="true"></provider>
+
+        <receiver
+            android:name=".BootReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
