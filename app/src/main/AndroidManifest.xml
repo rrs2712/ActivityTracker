@@ -26,14 +26,15 @@
             android:name=".ConProvider"
             android:authorities="com.g54mdp.cw2.activitytracker.ConProvider"
             android:exported="true"
-            android:multiprocess="true"></provider>
+            android:multiprocess="true" />
 
-        <receiver
-            android:name=".BootReceiver">
+        <receiver android:name=".BootReceiver">
             <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
+
+        <activity android:name=".RecordViewer"></activity>
     </application>
 
 </manifest>

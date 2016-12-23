@@ -21,10 +21,19 @@
 
         <Button
             android:text="Action Button"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_weight=".5"
             android:id="@+id/btn_action"
             android:onClick="onBtnAction" />
+
+        <Button
+            android:text="Records"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight=".5"
+            android:id="@+id/btn_records"
+            android:onClick="onBtnRecords" />
 
     </LinearLayout>
 

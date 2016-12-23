@@ -13,8 +13,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 
-import static com.g54mdp.cw2.activitytracker.LocationService.SHARED_PREF;
-
 public class MainActivity extends AppCompatActivity {
 
     private final String CLA = "RRS MainActivity";
@@ -128,13 +126,20 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    public void onBtnRecords(View view){
+        Log.d(CLA, "onBtnRecords");
+
+        Intent i = new Intent(MainActivity.this,RecordViewer.class);
+        startActivity(i);
+    }
+
     private void manageGUI(){
         Button btn = (Button) findViewById(R.id.btn_action);
 
         if(keepServiceRunning){
-            btn.setText("Stop service");
+            btn.setText("Stop");
         }else{
-            btn.setText("Start service");
+            btn.setText("Start");
         }
 
         setSettings();
