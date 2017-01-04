@@ -3,6 +3,7 @@ package com.g54mdp.cw2.activitytracker;
 import android.content.ContentProvider;
 import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.SharedPreferences;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -13,7 +14,7 @@ import android.util.Log;
  * Created by rrs27 on 2016-12-20.
  */
 
-public class ConProvider extends ContentProvider {
+public class ConProvider extends ContentProvider{
 
     private DBHelper dbHelper = null;
     private final String CLA = "RRS ConProvider";
@@ -24,6 +25,9 @@ public class ConProvider extends ContentProvider {
         uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
         uriMatcher.addURI(ProviderContract.AUTHORITY, "/location", 1);
         uriMatcher.addURI(ProviderContract.AUTHORITY, "/location/n/", 2);
+        uriMatcher.addURI(ProviderContract.AUTHORITY, "/day_overview", 3);
+        uriMatcher.addURI(ProviderContract.AUTHORITY, "/day_format", 4);
+
     }
 
     @Override
@@ -95,9 +99,42 @@ public class ConProvider extends ContentProvider {
             case 1:
                 Log.d(CLA, " Case 1:");
                 return db.query(DBHelper.TABLE_NAME, projection, selection, selectionArgs, null, null, sortOrder);
+            case 3:
+                Log.d(CLA, " Case 3:");
+                String userFormatChoice = getQueryFormat();
+                return db.rawQuery(userFormatChoice,null);
+            case 4:
+                Log.d(CLA, " Case 4:");
+                return db.rawQuery(DBHelper.QUERY_DAY_FORMATS,null);
             default:
                 return null;
         }
+    }
+
+    private String getQueryFormat(){
+        Log.d(CLA,"getQueryFormat");
+
+        String queryFormat = "";
+
+        SharedPreferences settings = getContext().getSharedPreferences(LocationService.SHARED_PREF, 0);
+        int formatChoice = settings.getInt(LocationService.SP_DATE_FORMAT,1);
+
+        switch (formatChoice){
+            case 2:
+                queryFormat = DBHelper.QUERY_DAY_OVERVIEW_2;
+                break;
+            case 3:
+                queryFormat = DBHelper.QUERY_DAY_OVERVIEW_3;
+                break;
+            case 4:
+                queryFormat = DBHelper.QUERY_DAY_OVERVIEW_4;
+                break;
+            case 1:
+            default:
+                queryFormat = DBHelper.QUERY_DAY_OVERVIEW_1;
+        }
+
+        return queryFormat;
     }
 
     @Override

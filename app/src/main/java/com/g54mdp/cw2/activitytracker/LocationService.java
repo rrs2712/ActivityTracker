@@ -21,13 +21,13 @@ public class LocationService extends Service {
     public static final String
         AUTO_CREATE_NOTIFICATION = "create",
         SHARED_PREF = "com.g54mdp.cw2.activitytracker",
-        SP_AUTO_CREATE = "ux_create_not";
+        SP_ON_PHONE_START = "ux_choice_on_phone_start",
+        SP_DATE_FORMAT = "ux_date_format_choice";
 
-    private final String
-        CLA = "RRS LocationService",
-        MSG = "Tracking in background",
-        TITLE = "Activity Tracker",
-        CONTENT = "is tracking";
+    private final String CLA = "RRS LocationService";
+    private final String TITLE = "Activity Tracker";
+    private final String CONTENT = "is tracking";
+    private final String MSG = TITLE +" is now tracking in background =)";
 
     private final IBinder binder = new LocationServiceBinder();
 

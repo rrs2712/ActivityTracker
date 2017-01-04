@@ -4,18 +4,24 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.CheckBox;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+
+import static com.g54mdp.cw2.activitytracker.R.drawable.gps_off;
+import static com.g54mdp.cw2.activitytracker.R.drawable.gps_on;
+import static com.g54mdp.cw2.activitytracker.R.drawable.ic_play_24dp;
+import static com.g54mdp.cw2.activitytracker.R.drawable.ic_stop_24dp;
 
 public class MainActivity extends AppCompatActivity {
 
     private final String CLA = "RRS MainActivity";
+
+//    private String SERVICE_STATE = "current_state_of_service_when_using_other_activities";
 
     private LocationService service;
 
@@ -26,6 +32,14 @@ public class MainActivity extends AppCompatActivity {
         Log.d(CLA, "onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        startAndBindLocationService();
+
+//        if(savedInstanceState!=null){
+//            boolean x = savedInstanceState.getBoolean(SERVICE_STATE);
+//            Log.d(CLA,"onCreateInstanceState: " + x);
+//        }
+
     }
 
     @Override
@@ -33,8 +47,7 @@ public class MainActivity extends AppCompatActivity {
         Log.d(CLA, "onStart");
         super.onStart();
 
-        startAndBindLocationService();
-//        manageGUI();
+
     }
 
     @Override
@@ -133,16 +146,26 @@ public class MainActivity extends AppCompatActivity {
         startActivity(i);
     }
 
+    public void onBtnSettings(View view){
+        Log.d(CLA, "onBtnSettings");
+
+        Intent i = new Intent(MainActivity.this,Settings.class);
+        startActivity(i);
+    }
+
     private void manageGUI(){
-        Button btn = (Button) findViewById(R.id.btn_action);
+        ImageButton btn = (ImageButton) findViewById(R.id.btn_action);
+        ImageView img = (ImageView) findViewById(R.id.imgView_GPS);
 
         if(keepServiceRunning){
-            btn.setText("Stop");
+//            btn.setText("Stop");
+            btn.setImageResource(ic_stop_24dp);
+            img.setImageResource(gps_on);
         }else{
-            btn.setText("Start");
+//            btn.setText("Start");
+            btn.setImageResource(ic_play_24dp);
+            img.setImageResource(gps_off);
         }
-
-        setSettings();
     }
 
     private void startAndBindLocationService() {
@@ -189,34 +212,19 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    private void saveSettings(){
-        Log.d(CLA,"saveSettings");
-
-        CheckBox ch = (CheckBox) findViewById(R.id.chbox_boot);
-        boolean autoCreate = ch.isChecked();
-
-        SharedPreferences settings = getSharedPreferences(LocationService.SHARED_PREF, 0);
-        SharedPreferences.Editor editor = settings.edit();
-
-        editor.putBoolean(LocationService.SP_AUTO_CREATE,autoCreate);
-
-        editor.commit();
-    }
-
-    private void setSettings(){
-        Log.d(CLA,"setSettings");
-
-        SharedPreferences settings = getSharedPreferences(LocationService.SHARED_PREF, 0);
-        boolean createNot = settings.getBoolean(LocationService.SP_AUTO_CREATE,false);
-
-        CheckBox ch = (CheckBox) findViewById(R.id.chbox_boot);
-        ch.setChecked(createNot);
-    }
-
-    public void onCheckBox(View v){
-        Log.d(CLA,"onCheckBox");
-
-        saveSettings();
-    }
-
+//    @Override
+//    protected void onSaveInstanceState(Bundle outState) {
+//        Log.d(CLA,"onSaveInstanceState: " + keepServiceRunning);
+//
+//        outState.putBoolean(SERVICE_STATE,keepServiceRunning);
+//        super.onSaveInstanceState(outState);
+//    }
+//
+//    @Override
+//    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+//        super.onRestoreInstanceState(savedInstanceState);
+//
+//        boolean x = savedInstanceState.getBoolean(SERVICE_STATE);
+//        Log.d(CLA,"onRestoreInstanceState: " + x);
+//    }
 }

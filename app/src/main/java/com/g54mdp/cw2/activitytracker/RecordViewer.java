@@ -30,20 +30,13 @@ public class RecordViewer extends AppCompatActivity {
 
     private void setWidgets(){
         String[] projection = new String[]{
-                ProviderContract._ID,
-                ProviderContract.DATE_TIME_ST//,
-//                ProviderContract.LOCATION_LAT,
-//                ProviderContract.LOCATION_LON,
-//                ProviderContract.LOCATION_ALT
+                ProviderContract.DAY_OVERVIEW_DATE,
+                ProviderContract.DAY_OVERVIEW_RECORDS
         };
 
         String[] ColsToDisplay = new String[]{
-                ProviderContract._ID,
-                ProviderContract.DATE_TIME_ST//,
-//                ProviderContract.LOCATION_LAT,
-//                ProviderContract.LOCATION_LON,
-//                ProviderContract.LOCATION_ALT
-
+                ProviderContract.DAY_OVERVIEW_DATE,
+                ProviderContract.DAY_OVERVIEW_RECORDS
         };
 
         int[] ColResIDs = new int[]{
@@ -51,7 +44,19 @@ public class RecordViewer extends AppCompatActivity {
             R.id.descView
         };
 
-        Cursor cursor = getContentResolver().query(ProviderContract.LOCATION_URI,projection,null,null,null);
+        Cursor cursor = getContentResolver().query(ProviderContract.DAY_OVERVIEW_URI,projection,null,null,null);
+
+        String toLog = "\n";
+        if(cursor.moveToFirst())
+        {
+            do
+            {
+                toLog += cursor.getString(0); toLog += " | ";
+                toLog += cursor.getString(1); toLog += "\n";
+            }
+            while(cursor.moveToNext());
+        }
+        Log.d(CLA,toLog);
 
         dataAdapter = new SimpleCursorAdapter(this,R.layout.db_list_item_layout,cursor,ColsToDisplay,ColResIDs,0);
 

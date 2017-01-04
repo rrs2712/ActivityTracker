@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
@@ -11,37 +12,54 @@
     android:orientation="vertical"
     tools:context="com.g54mdp.cw2.activitytracker.MainActivity">
 
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="128dp"
+        app:srcCompat="@drawable/gps_off"
+        android:id="@+id/imgView_GPS"
+        android:scaleType="centerInside"/>
+
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
-        android:paddingBottom="16dp">
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp"
+        android:gravity="center">
 
-        <Button
-            android:text="Action Button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight=".5"
+        <ImageButton
+            android:layout_width="128dp"
+            android:layout_height="128dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/ic_stop_24dp"
             android:id="@+id/btn_action"
             android:onClick="onBtnAction" />
 
-        <Button
-            android:text="Records"
+        <LinearLayout
+            android:orientation="vertical"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight=".5"
-            android:id="@+id/btn_records"
-            android:onClick="onBtnRecords" />
+            android:layout_height="wrap_content">
+
+            <ImageButton
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:scaleType="fitXY"
+                android:src="@drawable/ic_settings_24dp"
+                android:id="@+id/btn_settings"
+                android:onClick="onBtnSettings" />
+
+            <ImageButton
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:scaleType="fitXY"
+                android:src="@drawable/ic_records_24dp"
+                android:id="@+id/btn_records"
+                android:onClick="onBtnRecords" />
+
+        </LinearLayout>
 
     </LinearLayout>
 
-    <CheckBox
-        android:text="Auto track when phone boots"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/chbox_boot"
-        android:onClick="onCheckBox"/>
+
 
 </LinearLayout>

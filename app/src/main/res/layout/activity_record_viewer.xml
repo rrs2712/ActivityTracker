@@ -21,7 +21,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="DB Contains:" />
+            android:text="Daily Summary:" />
 
         <ListView
             android:layout_width="match_parent"

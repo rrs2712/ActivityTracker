@@ -32,6 +32,6 @@ public class BootReceiver extends BroadcastReceiver {
 
     private boolean autoStartService(Context context){
         SharedPreferences settings = context.getSharedPreferences(LocationService.SHARED_PREF, 0);
-        return settings.getBoolean(LocationService.SP_AUTO_CREATE,false);
+        return settings.getBoolean(LocationService.SP_ON_PHONE_START,false);
     }
 }
