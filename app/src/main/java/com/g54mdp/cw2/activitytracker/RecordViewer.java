@@ -1,17 +1,21 @@
 package com.g54mdp.cw2.activitytracker;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
 public class RecordViewer extends AppCompatActivity {
 
     private SimpleCursorAdapter dataAdapter;
-    private final String
-            CLA = "RRS RecordViewer";
+    private final String CLA = "RRS RecordViewer";
+    public  static String TAG_DAY_FILTER = "tag_day_filter";
+    public  static String TAG_DAY_FORMATED = "tag_day_format";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,5 +66,30 @@ public class RecordViewer extends AppCompatActivity {
 
         final ListView lv = (ListView) findViewById(R.id.lv_db_records);
         lv.setAdapter(dataAdapter);
+
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> myAdapter,
+                                    View myView,
+                                    int myItemInt,
+                                    long mylng) {
+                Cursor c1 = (Cursor) lv.getAdapter().getItem(myItemInt);
+                showDayDetails(c1.getString(1),c1.getString(2));
+            }
+        });
+    }
+
+    private void showDayDetails(String formatDate, String filterDate) {
+
+        filterDate = "'" + filterDate.substring(0,10) + "'";
+        Log.d(CLA," Selected item: " + filterDate);
+
+        Bundle b = new Bundle();
+        b.putString(TAG_DAY_FORMATED,formatDate);
+        b.putString(TAG_DAY_FILTER,filterDate);
+
+        Intent i = new Intent(this, RecordDetails.class);
+        i.putExtras(b);
+
+        startActivity(i);
     }
 }

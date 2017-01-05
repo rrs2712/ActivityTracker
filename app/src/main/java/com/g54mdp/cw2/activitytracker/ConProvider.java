@@ -92,12 +92,14 @@ public class ConProvider extends ContentProvider{
 
         switch(uriMatcher.match(uri))
         {
-            case 2:
-                Log.d(CLA, " Case 2:");
-                selection = "_id = " + selection;
-                Log.d(CLA,selection);
             case 1:
                 Log.d(CLA, " Case 1:");
+                return db.query(DBHelper.TABLE_NAME, projection, selection, selectionArgs, null, null, sortOrder);
+            case 2:
+                Log.d(CLA, " Case 2:");
+                sortOrder = "date asc";
+                selection = "substr(date,0,11) = " + selection;
+//                Log.d(CLA,selection+ " | " +  sortOrder) ;
                 return db.query(DBHelper.TABLE_NAME, projection, selection, selectionArgs, null, null, sortOrder);
             case 3:
                 Log.d(CLA, " Case 3:");
