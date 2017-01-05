@@ -77,7 +77,7 @@ public class LocationService extends Service {
     }
 
 
-    public void createNotification(){
+    private void createNotification(){
         Log.d(CLA,"createNotification");
 
         Intent mainActivity = new Intent(this, MainActivity.class);
@@ -156,8 +156,12 @@ public class LocationService extends Service {
     }
 
     public class LocationServiceBinder extends Binder {
-        LocationService getService(){
-            return LocationService.this;
+//        LocationService getService(){
+//            return LocationService.this;
+//        }
+
+        void createNotification(){
+            LocationService.this.createNotification();
         }
     }
 }

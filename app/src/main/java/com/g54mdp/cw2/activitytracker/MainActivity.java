@@ -23,7 +23,7 @@ public class MainActivity extends AppCompatActivity {
 
 //    private String SERVICE_STATE = "current_state_of_service_when_using_other_activities";
 
-    private LocationService service;
+    private LocationService.LocationServiceBinder service;
 
     private boolean keepServiceRunning;
 
@@ -202,8 +202,8 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             Log.d(CLA, "onServiceConnected");
-            LocationService.LocationServiceBinder binder = (LocationService.LocationServiceBinder) service;
-            MainActivity.this.service = binder.getService();
+            MainActivity.this.service = (LocationService.LocationServiceBinder) service;
+//            MainActivity.this.service = binder.getService();
         }
 
         @Override
