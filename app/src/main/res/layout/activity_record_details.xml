@@ -18,58 +18,129 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:gravity="center"
         android:paddingTop="5dp"
+        android:background="@color/bluegray"
         android:id="@+id/tv_title"/>
 
-    <TextView
-        android:text="Distance:"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:paddingTop="20dp"/>
-    <TextView
-        android:text="150 mts"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:id="@+id/tv_distance" />
+        android:orientation="horizontal"
+        android:paddingTop="20dp">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_weight=".5">
 
-    <TextView
-        android:text="Time:"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:paddingTop="20dp"/>
-    <TextView
-        android:text="60 minutes"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:id="@+id/tv_time" />
+            <TextView
+                android:text="Distance:"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:gravity="center"
+                android:background="@color/bluegray"/>
+            <TextView
+                android:text="150 mts"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:id="@+id/tv_distance"
+                android:gravity="center"/>
 
-    <TextView
-        android:text="Avg Speed:"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:paddingTop="20dp"/>
-    <TextView
-        android:text="2.3 mts/min"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:id="@+id/tv_speed" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_weight=".5">
 
-    <TextView
-        android:text="Climbed:"
+            <TextView
+                android:text="Time:"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:gravity="center"
+                android:background="@color/bluegray"/>
+            <TextView
+                android:text="60 min"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:id="@+id/tv_time"
+                android:gravity="center"/>
+
+        </LinearLayout>
+    </LinearLayout>
+
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:paddingTop="20dp"/>
-    <TextView
-        android:text="10 mts"
+        android:orientation="horizontal"
+        android:paddingTop="20dp">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_weight=".5">
+
+            <TextView
+                android:text="Avg Speed:"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:gravity="center"
+                android:background="@color/bluegray"/>
+            <TextView
+                android:text="2.3 mt/mi"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:id="@+id/tv_speed"
+                android:gravity="center"/>
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_weight=".5">
+
+            <TextView
+                android:text="Climbed:"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:gravity="center"
+                android:background="@color/bluegray"/>
+            <TextView
+                android:text="10 mts"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:id="@+id/tv_height"
+                android:gravity="center"/>
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:id="@+id/tv_height" />
+        android:paddingTop="20dp"
+        android:gravity="center">
+
+        <ImageButton
+            android:layout_width="128dp"
+            android:layout_height="128dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/ic_directions_24dp"
+            android:id="@+id/btnMap"
+            android:onClick="onMap"/>
+
+    </LinearLayout>
+
+
 
 </LinearLayout>

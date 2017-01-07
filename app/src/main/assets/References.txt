@@ -1,0 +1,46 @@
+References:
+
+GPX - Samples
+http://alanwalks.wales/data/gpx-location/
+
+Location strategies
+https://developer.android.com/guide/topics/location/strategies.html
+
+Location constructor
+https://developer.android.com/reference/android/location/Location.html#Location(java.lang.String)
+
+Icons design
+https://developer.android.com/guide/practices/ui_guidelines/icon_design_status_bar.html
+
+Date format
+https://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html
+
+Calendar class
+https://docs.oracle.com/javase/7/docs/api/java/util/Calendar.html
+
+SQLite affinity names and data types
+http://www.sqlite.org/datatype3.html
+
+SQLite substring function
+https://www.sqlite.org/lang_corefunc.html#substr
+
+SQLite Date Time
+https://www.sqlite.org/lang_datefunc.html
+
+CheckBox
+https://developer.android.com/guide/topics/ui/controls/checkbox.html
+
+Free icons
+http://findicons.com/search/gps#ajax
+
+Broadcast receiver 
+http://www.vogella.com/tutorials/AndroidBroadcastReceiver/article.html#automatically-starting-services-from-a-receivers
+
+Number format
+https://docs.oracle.com/javase/tutorial/i18n/format/decimalFormat.html
+
+Maps Android API
+https://developers.google.com/maps/documentation/android-api/intents?hl=es-419
+
+Google Maps Parameters
+https://moz.com/ugc/everything-you-never-wanted-to-know-about-google-maps-parameters
