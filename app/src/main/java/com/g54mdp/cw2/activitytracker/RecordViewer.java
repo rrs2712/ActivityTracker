@@ -17,6 +17,8 @@ public class RecordViewer extends AppCompatActivity {
     public  static String TAG_DAY_FILTER = "tag_day_filter";
     public  static String TAG_DAY_FORMATED = "tag_day_format";
 
+    // ## Lifecycle management ## //
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.d(CLA,"onCreate");
@@ -32,6 +34,12 @@ public class RecordViewer extends AppCompatActivity {
         setWidgets();
     }
 
+    // ## Class methods ## //
+
+    /**
+     * Query the database using the content provider and retrieve records sorted by day, then fill
+     * a list with such information and finally sets a listener.
+     */
     private void setWidgets(){
         String[] projection = new String[]{
                 ProviderContract.DAY_OVERVIEW_DATE,
@@ -50,18 +58,6 @@ public class RecordViewer extends AppCompatActivity {
 
         Cursor cursor = getContentResolver().query(ProviderContract.DAY_OVERVIEW_URI,projection,null,null,null);
 
-        String toLog = "\n";
-        if(cursor.moveToFirst())
-        {
-            do
-            {
-                toLog += cursor.getString(0); toLog += " | ";
-                toLog += cursor.getString(1); toLog += "\n";
-            }
-            while(cursor.moveToNext());
-        }
-        Log.d(CLA,toLog);
-
         dataAdapter = new SimpleCursorAdapter(this,R.layout.db_list_item_layout,cursor,ColsToDisplay,ColResIDs,0);
 
         final ListView lv = (ListView) findViewById(R.id.lv_db_records);
@@ -78,6 +74,12 @@ public class RecordViewer extends AppCompatActivity {
         });
     }
 
+    /**
+     * When an list item is clicked this method launches an intent adding the date to filter data
+     * in next activity, moreover, sends the formatted date to the next activity.
+     * @param formatDate
+     * @param filterDate
+     */
     private void showDayDetails(String formatDate, String filterDate) {
 
         filterDate = "'" + filterDate.substring(0,10) + "'";

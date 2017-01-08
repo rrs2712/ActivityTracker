@@ -16,27 +16,34 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+/**
+ * LocationService is a custom service created to manage access to system location service,
+ * handle notifications and background behaviour of Activity Tracker
+ */
 public class LocationService extends Service {
 
-    public static final String
-        AUTO_CREATE_NOTIFICATION = "create",
-        SHARED_PREF = "com.g54mdp.cw2.activitytracker",
-        SP_ON_PHONE_START = "ux_choice_on_phone_start",
-        SP_DATE_FORMAT = "ux_date_format_choice";
+    // Public access variables, especially regarding user preferences
+    public static final String AUTO_CREATE_NOTIFICATION = "create";
+    public static final String SHARED_PREF = "com.g54mdp.cw2.activitytracker";
+    public static final String SP_ON_PHONE_START = "ux_choice_on_phone_start";
+    public static final String SP_DATE_FORMAT = "ux_date_format_choice";
 
+    // Private variables for logging and notifications
     private final String CLA = "RRS LocationService";
     private final String TITLE = "Activity Tracker";
     private final String CONTENT = "is tracking";
-    private final String MSG = TITLE +" is now tracking in background =)";
+    private final String MSG = TITLE + " is now tracking in background =)";
 
+    // Private variables for binding, handling location manager and listener
     private final IBinder binder = new LocationServiceBinder();
-
     private LocationManager locationManager;
     private LocationListenerImpl locationListener;
 
+    // Private variables representing retrieving location parameters
     private final long MIN_TIME_LOC_UPDATES_MILLI_SECS = 5;
     private final float MIN_DIST_LOC_UPDATES_METERS = 5;
 
+    // ## Extended methods implementation ## //
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -44,6 +51,8 @@ public class LocationService extends Service {
 
         return binder;
     }
+
+    // ## Lifecycle management ## //
 
     @Override
     public void onCreate() {
@@ -65,9 +74,8 @@ public class LocationService extends Service {
 
         startLocationManager();
 
+        // Whether to create a notification or not when service starts
         Bundle bundle = intent.getExtras();
-//        boolean createNot = bundle.getBoolean(AUTO_CREATE_NOTIFICATION);
-//        if (createNot){
         if (bundle.getBoolean(AUTO_CREATE_NOTIFICATION)){
             createNotification();
             Log.d(CLA,"Notification auto created");
@@ -76,7 +84,12 @@ public class LocationService extends Service {
         return Service.START_STICKY;
     }
 
+    // ## Class methods ## //
 
+    /**
+     * Creates a notification that cancels itself once the user clicks it. Sorted above the regular
+     * notifications.
+     */
     private void createNotification(){
         Log.d(CLA,"createNotification");
 
@@ -97,20 +110,18 @@ public class LocationService extends Service {
         notificationManager.notify(0,notification);
     }
 
+
+    /**
+     * Stop requesting updates from the location manager
+     */
     private void stopLocationManager() {
         Log.d(CLA,"stopLocationManager");
 
+        // IDE auto generated code for access permissions
         if (ActivityCompat.checkSelfPermission(
                 this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(
                         this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
             Log.d(CLA,"Location permissions denied, can't stop LocationManager");
             return;
         }
@@ -122,23 +133,21 @@ public class LocationService extends Service {
         }
     }
 
+    /**
+     * Start requesting updates from the location manager. Instantiates location manager and assigns
+     * a listener.
+     */
     private void startLocationManager() {
         Log.d(CLA,"startLocationManager");
 
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         locationListener = new LocationListenerImpl(this);
 
+        // IDE auto generated code for access permissions
         if (ActivityCompat.checkSelfPermission(
                 this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(
                         this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
             Log.d(CLA,"Location permissions denied, can't start LocationManager");
             return;
         }
@@ -155,11 +164,16 @@ public class LocationService extends Service {
         }
     }
 
-    public class LocationServiceBinder extends Binder {
-//        LocationService getService(){
-//            return LocationService.this;
-//        }
+    // ## Other classes ## //
 
+    /**
+     * Creates an interface between this service and client
+     */
+    public class LocationServiceBinder extends Binder {
+
+        /**
+         * Provides public access to create a notification
+         */
         void createNotification(){
             LocationService.this.createNotification();
         }

@@ -2,7 +2,6 @@ package com.g54mdp.cw2.activitytracker;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
 import android.location.Location;
 import android.location.LocationListener;
 import android.os.Bundle;
@@ -16,53 +15,31 @@ import java.util.Calendar;
  * Created by rrs27 on 2016-12-18.
  */
 
+/**
+ * Listener implementation for location
+ */
 public class LocationListenerImpl implements LocationListener {
 
     private final String CLA;
     private Context context;
-    Location previousLocation;
+
+    // ## Class methods ## //
 
     /**
-     * Non parameter Class Constructor
+     * Class Constructor
      */
     public LocationListenerImpl(Context context) {
         CLA = "RRS LocationListener";
         this.context = context;
     }
 
-
     /**
-     * Called when the location has changed.
-     * <p>
-     * <p> There are no restrictions on the use of the supplied Location object.
-     *
-     * @param location The new location, as a Location object.
+     * Saves a record in the database using the content provider and given a specific format to the
+     * time stamp
+     * @param lat = latitude
+     * @param lon = longitude
+     * @param alt = altitude
      */
-    @Override
-    public void onLocationChanged(Location location) {
-        Log.d(CLA, "onLocationChanged");
-
-        String msg = "";
-
-        if (previousLocation!=null){
-//            msg = "Pre Loc" + "\tLAT: " + previousLocation.getLatitude() + "\tLON: " + previousLocation.getLongitude();
-//            Log.d(CLA, msg);
-//
-//            msg = "New Loc" + "\tLAT: " + location.getLatitude() + "\tLON: " + location.getLongitude();
-//            Log.d(CLA, msg);
-//
-//            float dist = previousLocation.distanceTo(location);
-//            msg = "Distance between locations: " + dist + " meters.";
-//            Log.d(CLA, msg);
-        }
-
-        saveRecord(location.getLatitude(),location.getLongitude(),location.getAltitude());
-        msg = "New record added";
-        Log.d(CLA,msg);
-
-        previousLocation = location;
-    }
-
     private void saveRecord(double lat, double lon, double alt){
         DateFormat df = new SimpleDateFormat(DBHelper.DB_DATE_FORMAT);
         Calendar rightNow = Calendar.getInstance();
@@ -77,41 +54,19 @@ public class LocationListenerImpl implements LocationListener {
         context.getContentResolver().insert(ProviderContract.LOCATION_URI,cv);
     }
 
-    private String getInfo() {
-        String[] projection = new String[]{
-                ProviderContract._ID,
-                ProviderContract.DATE_TIME_ST,
-                ProviderContract.LOCATION_LAT,
-                ProviderContract.LOCATION_LON,
-                ProviderContract.LOCATION_ALT
-        };
+    // ## Extended methods implementation ## //
 
-        String selection = "3";
+    /**
+     * Called when the location has changed.
+     * @param location The new location, as a Location object.
+     */
+    @Override
+    public void onLocationChanged(Location location) {
+        Log.d(CLA, "onLocationChanged");
 
-        Cursor cursor = context.getContentResolver().query(
-                ProviderContract.LOCATION_URI,
-                projection,
-                selection,null,null);
-
-        Log.d(CLA,cursor.toString() );
-
-        String toLog = "";
-
-        if(cursor.moveToFirst())
-        {
-            do
-            {
-                toLog += cursor.getString(0); toLog += " | ";
-                toLog += cursor.getString(1); toLog += " | ";
-                toLog += cursor.getString(2); toLog += " | ";
-                toLog += cursor.getString(3); toLog += " | ";
-                toLog += cursor.getString(4); toLog += " | ";
-            }
-            while(cursor.moveToNext());
-        }
-        return toLog;
+        saveRecord(location.getLatitude(),location.getLongitude(),location.getAltitude());
+        Log.d(CLA,"New record added");
     }
-
 
     /**
      * Called when the provider status changes. This method is called when
@@ -138,10 +93,9 @@ public class LocationListenerImpl implements LocationListener {
      */
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
-        String loc = "onStatusChanged" + "\tProvider: " + status;
+        String loc = "onStatusChanged" + "\tProvider: " + provider;
         Log.d(CLA, loc);
     }
-
 
     /**
      * Called when the provider is enabled by the user.
@@ -154,7 +108,6 @@ public class LocationListenerImpl implements LocationListener {
         String loc = "onProviderEnabled" + "\tProvider: " + provider;
         Log.d(CLA, loc);
     }
-
 
     /**
      * Called when the provider is disabled by the user. If requestLocationUpdates

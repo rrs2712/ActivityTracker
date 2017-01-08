@@ -13,6 +13,8 @@ public class Settings extends AppCompatActivity {
 
     private final String CLA = "RRS Settings";
 
+    // ## Lifecycle management ## //
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.d(CLA,"onCreate");
@@ -22,6 +24,11 @@ public class Settings extends AppCompatActivity {
         setSettings();
     }
 
+    // ## Class methods ## //
+
+    /**
+     * Saves user preference regarding whether or not start app when phone boots
+     */
     private void saveBootSettings(){
         Log.d(CLA,"saveBootSettings");
 
@@ -36,6 +43,10 @@ public class Settings extends AppCompatActivity {
         editor.commit();
     }
 
+    /**
+     * Saves user preference regarding date format to show in the rest of the app
+     * @param formatID
+     */
     private void saveDateFormat(int formatID) {
         Log.d(CLA,"saveDateFormat");
 
@@ -47,6 +58,10 @@ public class Settings extends AppCompatActivity {
         editor.commit();
     }
 
+    /**
+     * Retrieves and sets user saved preferences in the UI. In addition presents such information
+     * using current date
+     */
     private void setSettings(){
         Log.d(CLA,"setSettings");
 
@@ -54,6 +69,9 @@ public class Settings extends AppCompatActivity {
         setDateFormatSettings();
     }
 
+    /**
+     * Retrieves and sets user saved preferences in the UI regarding the boot phone system event
+     */
     private void setOnPhoneStartSettings() {
         SharedPreferences settings = getSharedPreferences(LocationService.SHARED_PREF, 0);
 
@@ -62,6 +80,9 @@ public class Settings extends AppCompatActivity {
         ch.setChecked(startOnBoot);
     }
 
+    /**
+     * Retrieves and sets user saved preferences in the UI regarding date format
+     */
     private void setDateFormatSettings() {
         Log.d(CLA,"setDateFormatSettings");
 
@@ -83,11 +104,6 @@ public class Settings extends AppCompatActivity {
             while(cursor.moveToNext());
         }
 
-//        rd1.setText(DBHelper.DAY_OVERVIEW_FORMAT1);
-//        rd2.setText(DBHelper.DAY_OVERVIEW_FORMAT2);
-//        rd3.setText(DBHelper.DAY_OVERVIEW_FORMAT3);
-//        rd4.setText(DBHelper.DAY_OVERVIEW_FORMAT4);
-
         SharedPreferences settings = getSharedPreferences(LocationService.SHARED_PREF, 0);
         int formatChoice = settings.getInt(LocationService.SP_DATE_FORMAT,1);
 
@@ -107,12 +123,22 @@ public class Settings extends AppCompatActivity {
         }
     }
 
+    // ## Events management ## //
+
+    /**
+     * Action to perform when check box is clicked
+     * @param v
+     */
     public void onCheckBox_Boot(View v){
         Log.d(CLA,"onCheckBox_Boot");
 
         saveBootSettings();
     }
 
+    /**
+     * Action to perform when a radio button is clicked.
+     * @param view
+     */
     public void onRadioBtns(View view){
         switch(view.getId()) {
             case R.id.radio_btn_format1:

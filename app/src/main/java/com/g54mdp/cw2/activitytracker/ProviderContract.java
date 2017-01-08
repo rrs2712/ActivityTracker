@@ -6,6 +6,9 @@ import android.net.Uri;
  * Created by rrs27 on 2016-12-20.
  */
 
+/**
+ * Contract class to provide URIs and data from content provider
+ */
 public class ProviderContract {
 
     public static final String AUTHORITY = "com.g54mdp.cw2.activitytracker.ConProvider";

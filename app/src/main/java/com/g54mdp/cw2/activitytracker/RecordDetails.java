@@ -18,17 +18,20 @@ import java.util.Date;
 
 public class RecordDetails extends AppCompatActivity {
 
+    // Class variables
     private final String CLA = "RRS RecordDetails";
     private final String NUMERIC_FORMAT="###,###.##";
+    private Cursor cursor;
+
+    // Map URL building
     private final String MAP_URL = "http://maps.google.com/maps";
     private final String MAP_ADDRESS_1 = "?saddr=";
     private final String MAP_ADDRESS_2 = "&daddr=";
     private final String MAP_ADDRESS_N = "+to:";
     private final String MAP_WALKING = "&dirflg=w";
-
     private final int MAP_MAX_LOCATIONS = 25;
 
-    private Cursor cursor;
+    // ## Lifecycle management ## //
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +45,14 @@ public class RecordDetails extends AppCompatActivity {
         setGUI(dayFo, dayFi);
     }
 
+    // ## Class methods ## //
+
+    /**
+     * Method used to retrieved and process information from the content provider in order to be
+     * shown in the UI
+     * @param dayFormatted
+     * @param dayFilter
+     */
     private void setGUI(String dayFormatted, String dayFilter) {
         TextView tvTitle = (TextView) findViewById(R.id.tv_title);
         TextView tvDistance = (TextView) findViewById(R.id.tv_distance);
@@ -66,14 +77,23 @@ public class RecordDetails extends AppCompatActivity {
         tvTime.setText(sTime);
         tvSpeed.setText(sSpeed);
         tvHeight.setText(sHeight);
-
     }
 
+    /**
+     * Formats a number to be shown in the UI
+     * @param aNumber
+     * @return
+     */
     private String numberFormatter(float aNumber){
         DecimalFormat myFormatter = new DecimalFormat(NUMERIC_FORMAT);
         return myFormatter.format(aNumber);
     }
 
+    /**
+     * Calculates climbing
+     * @param cursor
+     * @return
+     */
     private float getClimbedHeight(Cursor cursor){
 
         float distanceClimbed = 0f;
@@ -84,37 +104,39 @@ public class RecordDetails extends AppCompatActivity {
 
             cursor.moveToFirst();
             while (cursor.isAfterLast() == false) {
-
                 currentHeight = cursor.getDouble(4);
-//                Log.d(CLA, "Altitude now " + currentHeight);
 
                 if (previousHeight != null) {
-//                    Log.d(CLA, "Altitude pre " + previousHeight);
-
                     if(currentHeight>previousHeight){
                         distanceClimbed += (currentHeight.floatValue() - previousHeight.floatValue());
-//                        Log.d(CLA, "Climbed (mts) = " + distanceClimbed);
                     }
-
                 }
 
                 previousHeight = currentHeight;
-
                 cursor.moveToNext();
             }
         }
 
-        Log.d(CLA, "Total distance (mts) = " + distanceClimbed);
-
         return distanceClimbed;
     }
 
+    /**
+     * Calculates speed
+     * @param distance
+     * @param time
+     * @return
+     */
     private float getSpeed(float distance, float time){
         float x = distance/time;
         Log.d(CLA,"speed: " + x);
         return x;
     }
 
+    /**
+     * Calculates time between first and last record
+     * @param cursor
+     * @return
+     */
     private float getTotalTime(Cursor cursor){
         float min=0f;
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DBHelper.DB_DATE_FORMAT);
@@ -146,6 +168,11 @@ public class RecordDetails extends AppCompatActivity {
         return min;
     }
 
+    /**
+     * Calculates distance between each record and returns the overall addition
+     * @param cursor
+     * @return overall addition
+     */
     private float getTotalDistance(Cursor cursor) {
 
         Location locationPre = null;
@@ -161,11 +188,9 @@ public class RecordDetails extends AppCompatActivity {
                 locationNow.setLatitude(cursor.getDouble(2));
                 locationNow.setLongitude(cursor.getDouble(3));
                 locationNow.setAltitude(cursor.getDouble(4));
-//                Log.d(CLA, "Now: LAT=" + locationNow.getLatitude() + "\tLON=" + locationNow.getLongitude());
+
                 if (locationPre != null) {
-//                    Log.d(CLA, "Longitude pre " + locationPre.getLongitude());
                     distance += locationPre.distanceTo(locationNow);
-//                    Log.d(CLA, "Distance (mts) = " + distance);
                 }
 
                 locationPre = new Location(locationNow);
@@ -174,11 +199,15 @@ public class RecordDetails extends AppCompatActivity {
             }
         }
 
-        Log.d(CLA, "Total distance (mts) = " + distance);
-
         return distance;
     }
 
+    /**
+     * Obtains a cursor from the content provider to be used in the whole class for further
+     * data analysis
+     * @param day
+     * @return
+     */
     private Cursor getInfoFromDay(String day) {
         String[] projection = new String[]{
                 ProviderContract._ID,
@@ -191,7 +220,70 @@ public class RecordDetails extends AppCompatActivity {
         return getContentResolver().query(ProviderContract.LOCATION_URI_ID, projection, day, null, null);
     }
 
+    /**
+     * Build an URL to show the followed route in a google map regarding the info contained in the
+     * class cursor
+     * @return URL to be used in an implicit intent
+     */
+    private String getUrlFollowedRoute(){
 
+        String url = MAP_URL;
+        int recordCounter = 0;
+
+        recordCounter = (int)(cursor.getCount()/MAP_MAX_LOCATIONS);
+        String locations[] = new String[MAP_MAX_LOCATIONS];
+
+        cursor.moveToFirst();
+
+        locations[0] = cursor.getDouble(2) + "," + cursor.getDouble(3);
+
+        int i = 1;
+        int moveCursorTo = recordCounter;
+        while (i<=(MAP_MAX_LOCATIONS-2)){
+            cursor.moveToFirst();
+            cursor.move(moveCursorTo);
+            locations[i] = cursor.getDouble(2) + "," + cursor.getDouble(3);
+            moveCursorTo += recordCounter;
+            i++;
+        }
+
+        cursor.moveToLast();
+        locations[MAP_MAX_LOCATIONS-1] = cursor.getDouble(2) + "," + cursor.getDouble(3);
+
+        for (int a=0; a<locations.length;a++){
+            Log.d(CLA, "" + a + " = " + locations[a]);
+            switch (a){
+                case 0:
+                    url += MAP_ADDRESS_1 + locations[0];
+                    break;
+                case 1:
+                    url += MAP_ADDRESS_2 + locations[1];
+                    break;
+                default:
+                    url += MAP_ADDRESS_N + locations[a];
+            }
+        }
+
+        url += MAP_WALKING;
+        Log.d(CLA,url);
+
+        return  url;
+    }
+
+    /**
+     * Determines if there is enough data in the class cursor in relation to saved locations
+     * @return
+     */
+    private boolean isInfoEnoughToShowMap(){
+        return (cursor.getCount() > MAP_MAX_LOCATIONS) ? true : false;
+    }
+
+    // ## Events management ## //
+
+    /**
+     * Action to perform on button clicked event
+     * @param view
+     */
     public void onMap(View view){
 
         if (isInfoEnoughToShowMap()){
@@ -201,79 +293,6 @@ public class RecordDetails extends AppCompatActivity {
         }else{
             Toast.makeText(this,"Not enough info to show a map",Toast.LENGTH_LONG).show();
         }
-
-
-//        String loc1 = "52.935476666666666,-1.2099366666666667";
-//        String loc2 = "52.93706,-1.2152183333333333";
-//        String loc3 = "52.94745833333333,-1.18347";
-//        String loc4 = "52.93431999999999,-1.20717";
-//
-//        String navigationUrl = "http://maps.google.com/maps?saddr="+loc1+"&daddr="+loc2+"+to:"+loc3+"+to:"+loc4;
-//        Intent navIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(navigationUrl));
-//        startActivity(navIntent);
-
     }
 
-    private String getUrlFollowedRoute(){
-
-        String url = MAP_URL;
-        int recordCounter = 0;
-
-//        if (cursor.getCount()>MAP_MAX_LOCATIONS){
-            recordCounter = (int)(cursor.getCount()/MAP_MAX_LOCATIONS);
-            String locations[] = new String[MAP_MAX_LOCATIONS];
-//            Log.d(CLA,"Cursor=" + cursor.getCount() + "\tMax loc=" + MAP_MAX_LOCATIONS + "\tFactor=" + recordCounter);
-
-//            if (cursor.moveToFirst()) {
-
-            cursor.moveToFirst();
-//            Log.d(CLA, "First: " + cursor.getDouble(2) + "   " + cursor.getDouble(3));
-            locations[0] = cursor.getDouble(2) + "," + cursor.getDouble(3);
-
-            int i = 1;
-            int moveCursorTo = recordCounter;
-            while (i<=(MAP_MAX_LOCATIONS-2)){
-//                try {
-//                    Log.d(CLA,"i=" + i + " moveCursorTo=" + moveCursorTo);
-                    cursor.moveToFirst();
-                    cursor.move(moveCursorTo);
-//                    Log.d(CLA, "" + i + ":" + cursor.getDouble(2) + "   " + cursor.getDouble(3));
-                    locations[i] = cursor.getDouble(2) + "," + cursor.getDouble(3);
-                    moveCursorTo += recordCounter;
-                    i++;
-//                } catch (Exception e) {
-//                    Log.d(CLA,e.getMessage());
-//                    break;
-//                }
-            }
-
-            cursor.moveToLast();
-//            Log.d(CLA, "Last: " + cursor.getDouble(2) + "   " + cursor.getDouble(3));
-            locations[MAP_MAX_LOCATIONS-1] = cursor.getDouble(2) + "," + cursor.getDouble(3);
-
-            for (int a=0; a<locations.length;a++){
-                Log.d(CLA, "" + a + " = " + locations[a]);
-                switch (a){
-                    case 0:
-                        url += MAP_ADDRESS_1 + locations[0];
-                        break;
-                    case 1:
-                        url += MAP_ADDRESS_2 + locations[1];
-                        break;
-                    default:
-                        url += MAP_ADDRESS_N + locations[a];
-                }
-            }
-
-        url += MAP_WALKING;
-//            }
-//        }
-        Log.d(CLA,url);
-
-        return  url;
-    }
-
-    private boolean isInfoEnoughToShowMap(){
-        return (cursor.getCount() > MAP_MAX_LOCATIONS) ? true : false;
-    }
 }

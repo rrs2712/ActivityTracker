@@ -21,11 +21,10 @@ public class MainActivity extends AppCompatActivity {
 
     private final String CLA = "RRS MainActivity";
 
-//    private String SERVICE_STATE = "current_state_of_service_when_using_other_activities";
-
     private LocationService.LocationServiceBinder service;
-
     private boolean keepServiceRunning;
+
+    // ## Lifecycle management ## //
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,26 +33,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         startAndBindLocationService();
-
-//        if(savedInstanceState!=null){
-//            boolean x = savedInstanceState.getBoolean(SERVICE_STATE);
-//            Log.d(CLA,"onCreateInstanceState: " + x);
-//        }
-
-    }
-
-    @Override
-    protected void onStart() {
-        Log.d(CLA, "onStart");
-        super.onStart();
-
-
-    }
-
-    @Override
-    protected void onStop() {
-        Log.d(CLA, "onStop");
-        super.onStop();
     }
 
     @Override
@@ -66,67 +45,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-//    public void onBtnStart(View view){
-//        Log.d(CLA, "onBtnStart");
-//
-////        saveRecord(0.1,0.2,0.3);
-////        String toLog = getInfo();
-//
-//        String toLog = "Does nothing so far";
-//        Toast.makeText(this,toLog,Toast.LENGTH_SHORT).show();
-//    }
+    // ## Events management ## //
 
-//    private void saveRecord(double lat, double lon, double alt){
-//        DateFormat df = new SimpleDateFormat(DBHelper.DB_DATE_FORMAT);
-//        Calendar rightNow = Calendar.getInstance();
-//        String timeStamp = df.format(rightNow.getTime());
-//
-//        ContentValues cv = new ContentValues();
-//        cv.put(ProviderContract.DATE_TIME_ST,timeStamp);
-//        cv.put(ProviderContract.LOCATION_LAT,lat);
-//        cv.put(ProviderContract.LOCATION_LON,lon);
-//        cv.put(ProviderContract.LOCATION_ALT,alt);
-//
-//        getContentResolver().insert(ProviderContract.LOCATION_URI,cv);
-//    }
-
-
-//    private String getInfo() {
-//        String[] projection = new String[]{
-//                ProviderContract._ID,
-//                ProviderContract.DATE_TIME_ST,
-//                ProviderContract.LOCATION_LAT,
-//                ProviderContract.LOCATION_LON,
-//                ProviderContract.LOCATION_ALT
-//        };
-//
-//        String selection = "3";
-//
-//        Cursor cursor = getContentResolver().query(
-//                ProviderContract.LOCATION_URI,
-//                projection,
-//                selection,null,null);
-//
-//        Log.d(CLA,cursor.toString() );
-//
-//        String toLog = "";
-//
-//        if(cursor.moveToFirst())
-//        {
-//            do
-//            {
-//                toLog += cursor.getString(0); toLog += " | ";
-//                toLog += cursor.getString(1); toLog += " | ";
-//                toLog += cursor.getString(2); toLog += " | ";
-//                toLog += cursor.getString(3); toLog += " | ";
-//                toLog += cursor.getString(4); toLog += " | ";
-//                Log.d(CLA,toLog);
-//            }
-//            while(cursor.moveToNext());
-//        }
-//        return toLog;
-//    }
-
+    /**
+     * Toggles between starting and stopping the service on click event
+     * @param view
+     */
     public void onBtnAction(View view){
         Log.d(CLA, "onBtnStop");
 
@@ -136,9 +60,12 @@ public class MainActivity extends AppCompatActivity {
         }else{
             startAndBindLocationService();
         }
-
     }
 
+    /**
+     * Launch an intent to see a list of records on click event
+     * @param view
+     */
     public void onBtnRecords(View view){
         Log.d(CLA, "onBtnRecords");
 
@@ -146,6 +73,10 @@ public class MainActivity extends AppCompatActivity {
         startActivity(i);
     }
 
+    /**
+     * Launch an intent to see the settings UI on click event
+     * @param view
+     */
     public void onBtnSettings(View view){
         Log.d(CLA, "onBtnSettings");
 
@@ -153,21 +84,27 @@ public class MainActivity extends AppCompatActivity {
         startActivity(i);
     }
 
+    // ## Class methods ## //
+
+    /**
+     * Changes elements on the GUI according to the events
+     */
     private void manageGUI(){
         ImageButton btn = (ImageButton) findViewById(R.id.btn_action);
         ImageView img = (ImageView) findViewById(R.id.imgView_GPS);
 
         if(keepServiceRunning){
-//            btn.setText("Stop");
             btn.setImageResource(ic_stop_24dp);
             img.setImageResource(gps_on);
         }else{
-//            btn.setText("Start");
             btn.setImageResource(ic_play_24dp);
             img.setImageResource(gps_off);
         }
     }
 
+    /**
+     * Starts and bind location service without creating a notification
+     */
     private void startAndBindLocationService() {
         Bundle bundle = new Bundle();
         bundle.putBoolean(LocationService.AUTO_CREATE_NOTIFICATION,false);
@@ -181,16 +118,26 @@ public class MainActivity extends AppCompatActivity {
         manageGUI();
     }
 
+    /**
+     * Binds to location service
+     * @param serviceIntent
+     */
     private void bindLocationService(Intent serviceIntent) {
         this.bindService(serviceIntent,serviceConnection,Context.BIND_AUTO_CREATE);
     }
 
+    /**
+     * Unbinds from location service
+     */
     private void unbindLocationService() {
         if(serviceConnection!=null){
             unbindService(serviceConnection);
         }
     }
 
+    /**
+     * Stop location service explicitly and changes GUI elements according to the new state
+     */
     private void stopLocationService() {
         Intent serviceIntent = new Intent(MainActivity.this,LocationService.class);
         this.stopService(serviceIntent);
@@ -198,12 +145,14 @@ public class MainActivity extends AppCompatActivity {
         manageGUI();
     }
 
+    /**
+     * Connects to location service.
+     */
     private ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             Log.d(CLA, "onServiceConnected");
             MainActivity.this.service = (LocationService.LocationServiceBinder) service;
-//            MainActivity.this.service = binder.getService();
         }
 
         @Override
@@ -211,20 +160,4 @@ public class MainActivity extends AppCompatActivity {
             Log.d(CLA,"onServiceDisconnected");
         }
     };
-
-//    @Override
-//    protected void onSaveInstanceState(Bundle outState) {
-//        Log.d(CLA,"onSaveInstanceState: " + keepServiceRunning);
-//
-//        outState.putBoolean(SERVICE_STATE,keepServiceRunning);
-//        super.onSaveInstanceState(outState);
-//    }
-//
-//    @Override
-//    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-//        super.onRestoreInstanceState(savedInstanceState);
-//
-//        boolean x = savedInstanceState.getBoolean(SERVICE_STATE);
-//        Log.d(CLA,"onRestoreInstanceState: " + x);
-//    }
 }

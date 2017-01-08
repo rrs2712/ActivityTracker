@@ -14,13 +14,15 @@ import android.util.Log;
  * Created by rrs27 on 2016-12-20.
  */
 
+/**
+ * ConProvider class is Activity Tracker's Content Provider
+ */
 public class ConProvider extends ContentProvider{
 
     private DBHelper dbHelper = null;
     private final String CLA = "RRS ConProvider";
 
     private static final UriMatcher uriMatcher;
-
     static {
         uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
         uriMatcher.addURI(ProviderContract.AUTHORITY, "/location", 1);
@@ -30,6 +32,8 @@ public class ConProvider extends ContentProvider{
 
     }
 
+    // ## Lifecycle management ## //
+
     @Override
     public boolean onCreate() {
         Log.d(CLA, "onCreate");
@@ -37,23 +41,23 @@ public class ConProvider extends ContentProvider{
         return true;
     }
 
+    // ## Extended methods implementation ## //
+
     @Override
     public String getType(Uri uri) {
+        Log.d(CLA,"getType");
 
         String contentType;
 
-        if (uri.getLastPathSegment()==null)
-        {
+        if (uri.getLastPathSegment()==null) {
             contentType = ProviderContract.CONTENT_TYPE_MULTIPLE;
         }
-        else
-        {
+        else{
             contentType = ProviderContract.CONTENT_TYPE_SINGLE;
         }
 
         return contentType;
     }
-
 
     @Override
     public Uri insert(Uri uri, ContentValues values) {
@@ -62,6 +66,7 @@ public class ConProvider extends ContentProvider{
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         String tableName;
 
+        // In case more tables to be added in the future
         switch(uriMatcher.match(uri))
         {
             case 1:
@@ -81,62 +86,29 @@ public class ConProvider extends ContentProvider{
         return nu;
     }
 
-
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         Log.d(CLA,"query");
-
-        Log.d(CLA, uri.toString() + " " + uriMatcher.match(uri));
+        Log.d(CLA, uri.toString() + " UriMatcher:" + uriMatcher.match(uri));
 
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
         switch(uriMatcher.match(uri))
         {
             case 1:
-                Log.d(CLA, " Case 1:");
                 return db.query(DBHelper.TABLE_NAME, projection, selection, selectionArgs, null, null, sortOrder);
             case 2:
-                Log.d(CLA, " Case 2:");
                 sortOrder = "date asc";
                 selection = "substr(date,0,11) = " + selection;
-//                Log.d(CLA,selection+ " | " +  sortOrder) ;
                 return db.query(DBHelper.TABLE_NAME, projection, selection, selectionArgs, null, null, sortOrder);
             case 3:
-                Log.d(CLA, " Case 3:");
                 String userFormatChoice = getQueryFormat();
                 return db.rawQuery(userFormatChoice,null);
             case 4:
-                Log.d(CLA, " Case 4:");
                 return db.rawQuery(DBHelper.QUERY_DAY_FORMATS,null);
             default:
                 return null;
         }
-    }
-
-    private String getQueryFormat(){
-        Log.d(CLA,"getQueryFormat");
-
-        String queryFormat = "";
-
-        SharedPreferences settings = getContext().getSharedPreferences(LocationService.SHARED_PREF, 0);
-        int formatChoice = settings.getInt(LocationService.SP_DATE_FORMAT,1);
-
-        switch (formatChoice){
-            case 2:
-                queryFormat = DBHelper.QUERY_DAY_OVERVIEW_2;
-                break;
-            case 3:
-                queryFormat = DBHelper.QUERY_DAY_OVERVIEW_3;
-                break;
-            case 4:
-                queryFormat = DBHelper.QUERY_DAY_OVERVIEW_4;
-                break;
-            case 1:
-            default:
-                queryFormat = DBHelper.QUERY_DAY_OVERVIEW_1;
-        }
-
-        return queryFormat;
     }
 
     @Override
@@ -146,6 +118,7 @@ public class ConProvider extends ContentProvider{
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         String tableName;
 
+        // In case more tables to be updated in the future
         switch(uriMatcher.match(uri))
         {
             case 1:
@@ -180,4 +153,38 @@ public class ConProvider extends ContentProvider{
 
         return a;
     }
+
+    // ## Class methods ## //
+
+    /**
+     * Retrieve a query in the date format selected by the user from the preferences
+     * @return String with query according to the user preferences regarding date format to show in the GUI.
+     * If any format has been selected then returns the default format: yyyy/mm/dd for instance 2017/03/31'
+     */
+    private String getQueryFormat(){
+        Log.d(CLA,"getQueryFormat");
+
+        String queryFormat = "";
+
+        SharedPreferences settings = getContext().getSharedPreferences(LocationService.SHARED_PREF, 0);
+        int formatChoice = settings.getInt(LocationService.SP_DATE_FORMAT,1);
+
+        switch (formatChoice){
+            case 2:
+                queryFormat = DBHelper.QUERY_DAY_OVERVIEW_2;
+                break;
+            case 3:
+                queryFormat = DBHelper.QUERY_DAY_OVERVIEW_3;
+                break;
+            case 4:
+                queryFormat = DBHelper.QUERY_DAY_OVERVIEW_4;
+                break;
+            case 1:
+            default:
+                queryFormat = DBHelper.QUERY_DAY_OVERVIEW_1;
+        }
+
+        return queryFormat;
+    }
+
 }
